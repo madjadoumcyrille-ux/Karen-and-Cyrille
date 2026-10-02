@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Love Challenge ❤️</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#ff758c,#ff7eb3);min-height:100vh;color:#fff;display:flex;justify-content:center;align-items:center;padding:18px}
+.game{width:100%;max-width:520px;background:rgba(255,255,255,.15);backdrop-filter:blur(12px);border-radius:28px;padding:25px;box-shadow:0 15px 40px rgba(0,0,0,.2);text-align:center}
+h1{margin:5px 0 8px;font-size:34px}.sub{opacity:.9;margin-bottom:20px}
+.score{display:flex;justify-content:space-between;background:rgba(0,0,0,.15);padding:12px 15px;border-radius:16px;margin-bottom:20px;font-weight:bold}
+.card{background:#fff;color:#333;border-radius:22px;padding:25px;min-height:220px;display:flex;flex-direction:column;justify-content:center}
+.category{font-size:14px;color:#e8436b;font-weight:bold;text-transform:uppercase;letter-spacing:1px}
+.question{font-size:24px;font-weight:700;margin:18px 0}
+button{border:0;border-radius:15px;padding:14px 18px;margin:7px;cursor:pointer;font-size:16px;font-weight:bold;transition:.15s}
+button:hover{transform:scale(1.04)}
+.primary{background:#ff477e;color:#fff}.secondary{background:#ffe2ea;color:#d92d5b}
+.actions{margin-top:15px}.hidden{display:none}
+#result{font-size:20px;line-height:1.5}
+.small{font-size:13px;opacity:.8;margin-top:15px}
+</style>
+</head>
+<body>
+<div class="game">
+  <h1>❤️ Love Challenge</h1>
+  <div class="sub">Un petit jeu pour vous deux 💕</div>
+
+  <div class="score">
+    <span>👤 Joueur 1: <b id="s1">0</b></span>
+    <span>👤 Joueur 2: <b id="s2">0</b></span>
+  </div>
+
+  <div id="start">
+    <div class="card">
+      <div class="question">Prêts à tester votre complicité ? 😍</div>
+      <button class="primary" onclick="startGame()">COMMENCER ❤️</button>
+    </div>
+  </div>
+
+  <div id="game" class="hidden">
+    <div class="card">
+      <div class="category" id="cat"></div>
+      <div class="question" id="q"></div>
+      <div id="choices"></div>
+    </div>
+    <div class="actions">
+      <button class="secondary" onclick="newQuestion()">🎲 Nouvelle question</button>
+    </div>
+    <div class="small">À tour de rôle : le joueur indiqué répond ou réalise le défi.</div>
+  </div>
+
+  <div id="end" class="hidden">
+    <div class="card">
+      <div class="question">💕 Partie terminée !</div>
+      <div id="result"></div>
+      <button class="primary" onclick="restart()">REJOUER 🔄</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const questions=[
+["💕 ROMANTIQUE","Quelle est la première chose que tu as remarquée chez moi ?",["Joueur 1 répond","Joueur 2 répond"]],
+["💕 ROMANTIQUE","Donne-moi 3 choses que tu aimes chez moi.",["Joueur 1 répond","Joueur 2 répond"]],
+["💕 ROMANTIQUE","Quel est ton souvenir préféré avec moi ?",["Joueur 1 répond","Joueur 2 répond"]],
+["💕 ROMANTIQUE","Quelle chanson te fait penser à moi ?",["Joueur 1 répond","Joueur 2 répond"]],
+["💕 ROMANTIQUE","Décris notre rendez-vous parfait.",["Joueur 1 répond","Joueur 2 répond"]],
+["🥰 COMPLICITÉ","Qui connaît le mieux l’autre ?",["Joueur 1 répond","Joueur 2 répond"]],
+["🥰 COMPLICITÉ","Quelle petite chose que je fais te fait sourire ?",["Joueur 1 répond","Joueur 2 répond"]],
+["🥰 COMPLICITÉ","Devine ce que l’autre choisirait : plage 🏖️ ou montagne 🏔️ ?",["Joueur 1 répond","Joueur 2 répond"]],
+["🥰 COMPLICITÉ","Quel voyage aimerais-tu faire avec moi ?",["Joueur 1 répond","Joueur 2 répond"]],
+["🥰 COMPLICITÉ","Donne-moi un surnom que personne d’autre ne doit utiliser.",["Joueur 1 répond","Joueur 2 répond"]],
+["😏 TAQUIN","Qui est le plus jaloux ? 😂",["Joueur 1 répond","Joueur 2 répond"]],
+["😏 TAQUIN","Qui est tombé amoureux en premier ? 😏",["Joueur 1 répond","Joueur 2 répond"]],
+["😏 TAQUIN","Qu’est-ce qui te fait le plus craquer chez moi ?",["Joueur 1 répond","Joueur 2 répond"]],
+["😏 TAQUIN","Fais-moi rire en 20 secondes.",["Joueur 1 fait le défi","Joueur 2 fait le défi"]],
+["😏 TAQUIN","Regarde-moi dans les yeux pendant 15 secondes sans rire.",["Joueur 1 fait le défi","Joueur 2 fait le défi"]],
+["❤️ DÉFI","Fais un compliment sans utiliser 'beau/belle'.",["Joueur 1 fait le défi","Joueur 2 fait le défi"]],
+["❤️ DÉFI","Fais une mini déclaration d’amour de 20 secondes.",["Joueur 1 fait le défi","Joueur 2 fait le défi"]],
+["❤️ DÉFI","Donne un câlin de 20 secondes. 🤗",["Joueur 1 fait le défi","Joueur 2 fait le défi"]],
+["❤️ DÉFI","Envoie un message romantique à l’autre.",["Joueur 1 fait le défi","Joueur 2 fait le défi"]],
+["❤️ DÉFI","Choisis une photo de vous deux et raconte pourquoi tu l’aimes.",["Joueur 1 fait le défi","Joueur 2 fait le défi"]],
+["🔮 FUTUR","Où aimerais-tu qu’on soit dans 5 ans ?",["Joueur 1 répond","Joueur 2 répond"]],
+["🔮 FUTUR","Quel rêve aimerais-tu réaliser avec moi ?",["Joueur 1 répond","Joueur 2 répond"]],
+["🔮 FUTUR","Si on pouvait partir demain, où irions-nous ?",["Joueur 1 répond","Joueur 2 répond"]],
+["🔮 FUTUR","Quelle tradition aimerais-tu créer avec moi ?",["Joueur 1 répond","Joueur 2 répond"]],
+["🔮 FUTUR","Quelle promesse aimerais-tu qu’on se fasse ?",["Joueur 1 répond","Joueur 2 répond"]],
+["💋 BONUS","Choisis : bisou 😘 ou câlin 🤗",["Joueur 1 choisit","Joueur 2 choisit"]],
+["💋 BONUS","Choisis une activité à faire ensemble ce week-end.",["Joueur 1 choisit","Joueur 2 choisit"]],
+["💋 BONUS","Donne 5 secondes de danse romantique. 💃🕺",["Joueur 1 fait le défi","Joueur 2 fait le défi"]],
+["💋 BONUS","Dis 'je t’aime' avec ta voix la plus drôle.",["Joueur 1 fait le défi","Joueur 2 fait le défi"]],
+["🏆 FINAL","Pourquoi veux-tu continuer cette histoire avec moi ? ❤️",["Joueur 1 répond","Joueur 2 répond"]]
+];
+
+let used=[],s1=0,s2=0,current=0;
+function startGame(){
+ document.getElementById("start").classList.add("hidden");
+ document.getElementById("game").classList.remove("hidden");
+ newQuestion();
+}
+function newQuestion(){
+ if(used.length===questions.length){finish();return;}
+ let i;
+ do{i=Math.floor(Math.random()*questions.length)}while(used.includes(i));
+ used.push(i); current=i;
+ document.getElementById("cat").textContent=questions[i][0];
+ document.getElementById("q").textContent=questions[i][1];
+ const box=document.getElementById("choices"); box.innerHTML="";
+ questions[i][2].forEach((txt,n)=>{
+   const b=document.createElement("button"); b.className="primary"; b.textContent=txt;
+   b.onclick=()=>award(n); box.appendChild(b);
+ });
+}
+function award(player){
+ if(player===0){s1++;document.getElementById("s1").textContent=s1}
+ else{s2++;document.getElementById("s2").textContent=s2}
+ document.getElementById("choices").innerHTML='<div style="font-size:20px;color:#e8436b;font-weight:bold">❤️ Point ajouté !</div>';
+ setTimeout(newQuestion,650);
+}
+function finish(){
+ document.getElementById("game").classList.add("hidden");
+ document.getElementById("end").classList.remove("hidden");
+ let msg;
+ if(s1>s2) msg="Joueur 1 a gagné le challenge ! 🏆❤️";
+ else if(s2>s1) msg="Joueur 2 a gagné le challenge ! 🏆❤️";
+ else msg="Égalité parfaite ! Vous êtes une équipe incroyable ! 💕";
+ document.getElementById("result").innerHTML=`${msg}<br><br>Score : ${s1} – ${s2}<br><br>Le vrai gagnant : votre amour 😍`;
+}
+function restart(){used=[];s1=0;s2=0;document.getElementById("s1").textContent=0;document.getElementById("s2").textContent=0;document.getElementById("end").classList.add("hidden");document.getElementById("game").classList.remove("hidden");newQuestion();}
+</script>
+</body>
+</html>
