@@ -1,1 +1,38 @@
-
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Notre jeu d'amour 💗</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:18px;background:linear-gradient(145deg,#240016,#850b45,#ff8bb7);font-family:Arial,sans-serif;color:#fff;text-align:center;min-height:100vh}.card{max-width:540px;margin:12px auto;background:#fff8fb;color:#6f123d;padding:24px;border-radius:28px;box-shadow:0 12px 35px #12000c66}h1{font-family:Georgia,serif;font-size:38px;margin:8px 0}.heart{font-size:58px;animation:pulse 1s infinite}p{line-height:1.6}.btn{width:100%;padding:15px;margin:7px 0;border:0;border-radius:16px;background:#f51b73;color:white;font-size:16px;font-weight:bold;cursor:pointer}.btn.alt{background:#ffe0ed;color:#8b174b}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.grid button{background:#ffe7f0;color:#8b174b;box-shadow:0 4px #e9b7ca;min-height:75px}.note{background:#fff0f6;color:#6f123d;border-radius:18px;padding:22px;margin:14px 0;font:22px/1.5 Georgia,serif;min-height:120px}.hide{display:none}.small{font-size:13px;color:#a25b7b}@keyframes pulse{50%{transform:scale(1.12)}}.float{position:fixed;bottom:0;animation:up 2.3s forwards;pointer-events:none}@keyframes up{to{transform:translateY(-95vh) rotate(30deg);opacity:0}}
+</style></head><body><main class="card" id="intro"><div class="heart">💘</div><h1>Mission : faire sourire Darille</h1><p>Un mini-jeu préparé avec amour par <b>Tikorta Cyrille</b> 💗<br>Darille, Karen, prépare-toi : il y a des secrets, des cadeaux et un peu de folie ! 😂</p><p>🎯 <b>Mission :</b> clique sur les boutons et découvre les messages cachés.</p><button class="btn" onclick="begin()">💌 J'accepte la mission</button></main>
+<main class="card hide" id="game"><h2>🎁 Choisis un cadeau mystère</h2><p>Ouvre les boutons un par un. Chaque clic révèle une surprise romantique ou drôle.</p><div class="grid" id="grid"></div><div id="note" class="note hide"></div><p id="count">0 message découvert</p><button class="btn" onclick="surprise()">🎲 Surprise suivante</button><button class="btn alt" id="last" onclick="finale()">💌 Message ultra-secret</button></main>
+<main class="card hide" id="end"><div class="heart">🥹❤️</div><h1>Mission accomplie !</h1><p>Darille, si tu es arrivée jusqu'ici, sache que quelqu'un pense très fort à toi : <b>Tikorta Cyrille</b>. Tu mérites des sourires, du respect et beaucoup de douceur. ❤️</p><div class="note">Je ne promets pas d'être parfait, mais je veux apprendre à te comprendre, te faire rire et créer de beaux souvenirs avec toi. Je t'aime fort. 💗<br>— Cyrille</div><button class="btn" onclick="celebrate()">🎉 Pluie de cœurs</button><button class="btn alt" onclick="restart()">🔁 Rejouer</button><p class="small">P.S. : le créateur décline toute responsabilité en cas de sourire bête. 😂</p></main>
+<script>
+const msgs=[
+["😂 Arrestation","Darille, tu es arrêtée pour vol de cœur. La victime : Tikorta Cyrille. La peine : un câlin. 🤗"],
+["💗 Vérité","Je voulais rester mystérieux, mais je t'aime bien plus que mon niveau de timidité ne veut l'admettre. 😭❤️"],
+["🤣 Contrat","Contrat officiel : tu souris, je t'aime, tu souris encore. Signé : Cyrille."],
+["🌹 Petit souhait","Si je pouvais t'offrir une chose aujourd'hui, ce serait de te voir heureuse et de savoir que j'y ai contribué."],
+["😏 Avertissement","Parler avec Tikorta Cyrille peut provoquer des papillons dans le ventre et des sourires incontrôlables."],
+["💌 Promesse","Je veux que mes actes soient aussi doux que mes messages : te respecter, t'écouter et être sincère."],
+["🫶 Distance","Même quand tu es loin, tu restes une personne à qui j'ai envie de raconter les petites choses de ma journée."],
+["🍫 Question importante","Chocolat ou moi ? Prends le chocolat si tu veux… mais garde-moi une place à côté de toi. 😂"],
+["📱 Notification","Notification : tu viens de recevoir un bisou virtuel de Cyrille. 💋 Clique pour en recevoir un autre !"],
+["🧸 Cadeau","Tu viens de débloquer un câlin géant, valable dès qu'on se retrouve. Durée de validité : pour toujours. 🤗"],
+["🎬 Notre film","Titre du film : « Il voulait rester calme… puis Darille est arrivée ». Genre : romance et bêtises. 😂"],
+["🥹 Tout simple","Darille, merci d'être toi. Ne sous-estime jamais la joie que ton sourire peut donner à quelqu'un."],
+["☀️ Bonjour","Que ta journée soit douce, belle Darille. J'espère être une petite pensée qui te fait sourire."],
+["🌙 Bonne nuit","Dors paisiblement, Darille. Si tu souris avant de dormir, je vais prétendre que c'est grâce à moi. 😌❤️"],
+["💞 Nous","Je ne veux pas seulement te dire de jolies choses : je veux aussi te les montrer par mes actes."],
+["🤭 Confession","J'avais préparé une phrase très intelligente, puis j'ai pensé à toi et mon cerveau a affiché des cœurs."],
+["✨ Souvenir","J'espère qu'on aura plein de fous rires, de petites aventures et de souvenirs qu'on racontera longtemps."],
+["💘 La vérité","Tu es spéciale pour moi, Darille. Et non, ce message n'a pas été écrit par mon oreiller. 😂"],
+["💋 Bisou surprise","Ferme les yeux deux secondes… voilà, bisou envoyé à distance. Si tu l'as raté, reclique !"],
+["❤️ Final","Darille, de la part de Tikorta Cyrille : tu comptes beaucoup pour moi. Je veux te faire sourire, te respecter et construire de beaux souvenirs avec toi. Je t'aime. ❤️"]
+];
+let seen=new Set(),order=[];
+function begin(){intro.classList.add('hide');game.classList.remove('hide');order=msgs.map((_,i)=>i).sort(()=>Math.random()-.5);grid.innerHTML='';order.forEach(i=>{let b=document.createElement('button');b.className='btn';b.textContent=['💝 Cadeau','😏 Ouvre-moi','🎁 Secret','💌 Clique ici'][Math.floor(Math.random()*4)];b.onclick=()=>open(i,b);grid.appendChild(b)})}
+function open(i,b){seen.add(i);note.classList.remove('hide');note.innerHTML='<b>'+msgs[i][0]+'</b><br>'+msgs[i][1];b.textContent='💗 Déjà ouvert';b.disabled=true;b.style.opacity='.55';count.textContent=seen.size+' / '+msgs.length+' messages découverts';if(seen.size===msgs.length)last.textContent='💌 Tout est découvert ! Voir le final';hearts(5)}
+function surprise(){let left=msgs.map((_,i)=>i).filter(i=>!seen.has(i));if(!left.length){finale();return}let i=left[Math.floor(Math.random()*left.length)];let b=[...grid.children].find(x=>!x.disabled);open(i,b)}
+function finale(){game.classList.add('hide');end.classList.remove('hide');hearts(12)}
+function hearts(n){for(let i=0;i<n;i++){let e=document.createElement('div');e.className='float';e.textContent=['💗','💘','💕','❤️','✨'][Math.floor(Math.random()*5)];e.style.left=Math.random()*95+'vw';e.style.fontSize=(20+Math.random()*25)+'px';document.body.appendChild(e);setTimeout(()=>e.remove(),2400)}}
+function celebrate(){for(let i=0;i<8;i++)setTimeout(()=>hearts(10),i*160)}
+function restart(){seen.clear();end.classList.add('hide');intro.classList.remove('hide');count.textContent='0 message découvert'}
+</script></body></html>
